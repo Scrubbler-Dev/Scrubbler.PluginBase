@@ -1,0 +1,52 @@
+﻿<Project Sdk="Uno.Sdk">
+
+  <PropertyGroup>
+    <!-- Uno expects plural -->
+    <TargetFrameworks>net10.0</TargetFrameworks>
+
+    <!-- Enables Uno XAML codegen and build logic -->
+    <UseUnoXaml>true</UseUnoXaml>
+    <EnableDefaultXamlItems>true</EnableDefaultXamlItems>
+
+    <!-- Make it clear it's not a head app -->
+    <OutputType>Library</OutputType>
+
+    <AssemblyVersion>0.1.0</AssemblyVersion>
+    <FileVersion>0.1.0</FileVersion>
+
+    <!-- Nuget settings -->
+    <PackageId>Scrubbler.PluginBase</PackageId>
+    <Authors>SHOEGAZEssb</Authors>
+    <Description>Base abstractions for Scrubbler plugins.</Description>
+    <RepositoryUrl>https://github.com/SHOEGAZEssb/Scrubbler.PluginBase</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <!-- Clean out WPF-style default None items -->
+  <ItemGroup>
+    <None Remove="Controls\ScrobbleMultipleSelectorControl.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Uno.Microsoft.Xaml.Behaviors.WinUI.Managed" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="WinUI.TableView" />
+  </ItemGroup>
+
+  <!-- Uno handles XAML discovery automatically, but explicit pages are fine -->
+  <ItemGroup>
+    <Page Include="Controls\ScrobbleMultipleSelectorControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\ScrobbleTimeControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+</Project>
