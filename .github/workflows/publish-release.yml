@@ -40,13 +40,16 @@ jobs:
       - name: Build
         run: dotnet build -c Release --no-restore
 
+      - name: Test
+        run: dotnet test -c Release --no-build --verbosity normal
+
       - name: Pack
         run: |
           dotnet pack Scrubbler.PluginBase/Scrubbler.PluginBase.csproj \
             -c Release --no-build \
             /p:PackageVersion="${{ env.VERSION }}" \
+            /p:ContinuousIntegrationBuild=true \
             -o ./artifacts
-
 
       - name: Publish to NuGet.org
         run: |
@@ -54,7 +57,6 @@ jobs:
             --api-key "${{ secrets.NUGET_API_KEY }}" \
             --source "https://api.nuget.org/v3/index.json" \
             --skip-duplicate
-        # Uses standard dotnet nuget push flow. :contentReference[oaicite:2]{index=2}
 
       - name: Upload packages to GitHub Release
         uses: softprops/action-gh-release@v2
