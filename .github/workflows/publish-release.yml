@@ -1,0 +1,64 @@
+name: Publish NuGet (release)
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Derive version from tag
+        shell: bash
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          version="${tag#v}"
+
+          if [[ "$version" == "$tag" ]]; then
+            echo "Tag must start with 'v' (e.g. v0.1.0-alpha.1). Got: $tag"
+            exit 1
+          fi
+
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          echo "Using VERSION=$version"
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release --no-restore
+
+      - name: Pack
+        run: |
+          dotnet pack Scrubbler.PluginBase/Scrubbler.PluginBase.csproj \
+            -c Release --no-build \
+            /p:PackageVersion="${{ env.VERSION }}" \
+            -o ./artifacts
+
+
+      - name: Publish to NuGet.org
+        run: |
+          dotnet nuget push "./artifacts/*.nupkg" \
+            --api-key "${{ secrets.NUGET_API_KEY }}" \
+            --source "https://api.nuget.org/v3/index.json" \
+            --skip-duplicate
+        # Uses standard dotnet nuget push flow. :contentReference[oaicite:2]{index=2}
+
+      - name: Upload packages to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/*.nupkg
+            artifacts/*.snupkg
