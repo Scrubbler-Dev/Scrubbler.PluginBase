@@ -23,6 +23,8 @@ jobs:
       - name: Derive version from tag
         shell: bash
         run: |
+          set -e
+
           tag="${GITHUB_REF_NAME}"
           version="${tag#v}"
 
@@ -46,25 +48,34 @@ jobs:
       - name: Pack
         shell: bash
         run: |
+          set -euxo pipefail
+
           mkdir -p artifacts
 
           dotnet pack Scrubbler.PluginBase/Scrubbler.PluginBase.csproj \
-            -c Release --no-build \
+            -c Release \
+            /p:IsPackable=true \
             /p:PackageVersion="${{ env.VERSION }}" \
             /p:ContinuousIntegrationBuild=true \
-            -o artifacts
+            -o artifacts \
+            --verbosity normal
 
-          echo "Artifacts produced:"
+          echo "Contents of artifacts/:"
           ls -la artifacts
+
+          echo "Searching for packages in workspace:"
+          find . -maxdepth 6 -type f \( -name "*.nupkg" -o -name "*.snupkg" \) -print
 
       - name: Publish to NuGet.org
         shell: bash
         run: |
+          set -e
           shopt -s nullglob
+
           packages=(artifacts/*.nupkg)
 
           if (( ${#packages[@]} == 0 )); then
-            echo "No .nupkg found in artifacts/. Failing."
+            echo "No .nupkg found in artifacts/. Aborting publish."
             exit 1
           fi
 
