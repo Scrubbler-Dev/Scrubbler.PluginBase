@@ -44,16 +44,31 @@ jobs:
         run: dotnet test -c Release --no-build --verbosity normal
 
       - name: Pack
+        shell: bash
         run: |
+          mkdir -p artifacts
+
           dotnet pack Scrubbler.PluginBase/Scrubbler.PluginBase.csproj \
             -c Release --no-build \
             /p:PackageVersion="${{ env.VERSION }}" \
             /p:ContinuousIntegrationBuild=true \
-            -o ./artifacts
+            -o artifacts
+
+          echo "Artifacts produced:"
+          ls -la artifacts
 
       - name: Publish to NuGet.org
+        shell: bash
         run: |
-          dotnet nuget push "./artifacts/*.nupkg" \
+          shopt -s nullglob
+          packages=(artifacts/*.nupkg)
+
+          if (( ${#packages[@]} == 0 )); then
+            echo "No .nupkg found in artifacts/. Failing."
+            exit 1
+          fi
+
+          dotnet nuget push "${packages[@]}" \
             --api-key "${{ secrets.NUGET_API_KEY }}" \
             --source "https://api.nuget.org/v3/index.json" \
             --skip-duplicate
