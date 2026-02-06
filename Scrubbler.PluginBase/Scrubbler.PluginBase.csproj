@@ -18,7 +18,7 @@
     <PackageId>Scrubbler.PluginBase</PackageId>
     <Authors>SHOEGAZEssb</Authors>
     <Description>Base abstractions for Scrubbler plugins.</Description>
-    <RepositoryUrl>https://github.com/SHOEGAZEssb/Scrubbler.PluginBase</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Scrubbler-Dev/Scrubbler.PluginBase</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
 
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
