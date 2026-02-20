@@ -7,5 +7,6 @@
       string? LargeImageText = null,
       string? SmallImageKey = null,
       string? SmallImageText = null,
-      DateTimeOffset? StartTimestamp = null);
+      DateTimeOffset? StartTimestamp = null,
+      DateTimeOffset? EndTimestamp = null);
 }

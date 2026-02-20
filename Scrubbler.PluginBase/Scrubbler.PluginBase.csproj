@@ -12,7 +12,7 @@
     <OutputType>Library</OutputType>
 
     <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>1.0.0</FileVersion>
+    <FileVersion>1.1.0</FileVersion>
 
     <!-- Nuget settings -->
     <PackageId>Scrubbler.PluginBase</PackageId>
