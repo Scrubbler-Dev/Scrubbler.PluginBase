@@ -7,16 +7,34 @@ public abstract class PluginBase : IPlugin
 {
 	#region Properties
 
+	/// <summary>
+	/// Name of the plugin.
+	/// </summary>
 	public string Name { get; }
 
+	/// <summary>
+	/// Unique id of the plugin.
+	/// </summary>
 	public string Id { get; }
 
+	/// <summary>
+	/// Description of what the plugin does.
+	/// </summary>
 	public string Description { get; }
 
+	/// <summary>
+	/// Optional uri to the plugin icon.
+	/// </summary>
 	public Uri? IconUri { get; }
 
+	/// <summary>
+	/// The supported platforms of the plugin.
+	/// </summary>
 	public PlatformSupport SupportedPlatforms { get; }
 
+	/// <summary>
+	/// Version of the plugin.
+	/// </summary>
 	public Version Version { get; }
 
 	protected readonly ILogService _logService;
@@ -25,6 +43,12 @@ public abstract class PluginBase : IPlugin
 
 	#region Construction
 
+	/// <summary>
+	/// Constructor.
+	/// </summary>
+	/// <param name="logFactory">Factory for creating a log module for this plugin.</param>
+	/// <exception cref="InvalidOperationException">If no <see cref="PluginMetadataAttribute"/>
+	/// is defined on the inherited class.</exception>
 	protected PluginBase(IModuleLogServiceFactory logFactory)
 	{
 		var type = GetType();
@@ -49,6 +73,10 @@ public abstract class PluginBase : IPlugin
 
 	#endregion Construction
 
+	/// <summary>
+	/// Gets the viewmodel of this plugin.
+	/// </summary>
+	/// <returns>ViewModel.</returns>
 	public abstract IPluginViewModel GetViewModel();
 
 	private static Version GetFileVersionOrDefault(Assembly asm)
