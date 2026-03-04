@@ -1,4 +1,4 @@
-namespace Scrubbler.Abstractions;
+namespace Scrubbler.PluginBase;
 
 /// <summary>
 /// Resolves API keys from environment variables first, falling back to a .env file.

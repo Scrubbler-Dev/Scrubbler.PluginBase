@@ -1,6 +1,6 @@
 using WinUI.TableView;
 
-namespace Scrubbler.Abstractions.Controls;
+namespace Scrubbler.PluginBase.Controls;
 
 public class ScrobbableObjectTableView : TableView
 {

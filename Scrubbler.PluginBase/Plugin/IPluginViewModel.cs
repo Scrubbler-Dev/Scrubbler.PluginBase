@@ -1,6 +1,7 @@
+using Scrubbler.Abstractions;
 using System.ComponentModel;
 
-namespace Scrubbler.Abstractions.Plugin;
+namespace Scrubbler.PluginBase.Plugin;
 
 /// <summary>
 /// Base interface for all plugin view models.

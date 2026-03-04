@@ -1,4 +1,4 @@
-namespace Scrubbler.Abstractions.Settings;
+namespace Scrubbler.PluginBase.Settings;
 
 /// <summary>
 /// Marker interface for plugin settings classes.

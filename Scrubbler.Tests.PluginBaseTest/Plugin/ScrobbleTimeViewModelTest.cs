@@ -1,6 +1,6 @@
-using Scrubbler.Abstractions.Plugin;
+using Scrubbler.PluginBase.Plugin;
 
-namespace Scrubbler.Tests.AbstractionsTest.Plugin;
+namespace Scrubbler.Tests.PluginBaseTest.Plugin;
 
 [TestFixture]
 internal class ScrobbleTimeViewModelTest

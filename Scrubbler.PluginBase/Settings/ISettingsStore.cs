@@ -1,4 +1,4 @@
-namespace Scrubbler.Abstractions.Settings;
+namespace Scrubbler.PluginBase.Settings;
 
 /// <summary>
 /// Interface for storing and retrieving plugin settings.

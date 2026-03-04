@@ -1,4 +1,6 @@
-namespace Scrubbler.Abstractions.Plugin;
+using Scrubbler.Abstractions;
+
+namespace Scrubbler.PluginBase.Plugin;
 
 /// <summary>
 /// Base class for view models of plugins that allow manual scrobbling.

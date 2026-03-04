@@ -1,6 +1,6 @@
-using Scrubbler.Abstractions;
+using Scrubbler.PluginBase;
 
-namespace Scrubbler.Tests.AbstractionsTest;
+namespace Scrubbler.Tests.PluginBaseTest;
 
 [TestFixture]
 internal class ApiKeyStorageTest

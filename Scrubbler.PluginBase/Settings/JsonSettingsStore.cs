@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace Scrubbler.Abstractions.Settings;
+namespace Scrubbler.PluginBase.Settings;
 
 /// <summary>
 /// Implementation of <see cref="ISettingsStore"/> that persists settings to a JSON file.

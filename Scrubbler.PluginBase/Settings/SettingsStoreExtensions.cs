@@ -1,4 +1,4 @@
-namespace Scrubbler.Abstractions.Settings;
+namespace Scrubbler.PluginBase.Settings;
 
 /// <summary>
 /// Extension methods for <see cref="ISettingsStore"/>.

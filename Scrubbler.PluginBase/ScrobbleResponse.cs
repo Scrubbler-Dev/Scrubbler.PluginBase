@@ -1,4 +1,4 @@
-namespace Scrubbler.Abstractions;
+namespace Scrubbler.PluginBase;
 
 public class ScrobbleResponse(bool success, string? errorMessage)
 {

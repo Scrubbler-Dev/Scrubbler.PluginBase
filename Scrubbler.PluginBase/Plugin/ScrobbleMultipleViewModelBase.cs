@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.Input;
+using Scrubbler.PluginBase;
+using Scrubbler.PluginBase.Plugin;
 
 namespace Scrubbler.Abstractions.Plugin;
 

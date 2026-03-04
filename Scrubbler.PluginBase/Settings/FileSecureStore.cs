@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Scrubbler.Abstractions.Settings;
+namespace Scrubbler.PluginBase.Settings;
 
 /// <summary>
 /// Very simple file-based secure store.

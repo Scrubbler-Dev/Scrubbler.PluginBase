@@ -1,4 +1,4 @@
-namespace Scrubbler.Abstractions;
+namespace Scrubbler.PluginBase;
 
 /// <summary>
 /// Represents the data for a single scrobble.

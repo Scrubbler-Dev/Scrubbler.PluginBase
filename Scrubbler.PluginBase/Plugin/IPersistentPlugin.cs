@@ -1,4 +1,4 @@
-namespace Scrubbler.Abstractions.Plugin;
+namespace Scrubbler.PluginBase.Plugin;
 
 /// <summary>
 /// A plugin that persists state across application restarts.

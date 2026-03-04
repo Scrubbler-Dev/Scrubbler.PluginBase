@@ -1,4 +1,4 @@
-namespace Scrubbler.Abstractions.Plugin;
+namespace Scrubbler.PluginBase.Plugin;
 
 /// <summary>
 /// Marker interface for plugins that automatically detect and scrobble tracks without user intervention.

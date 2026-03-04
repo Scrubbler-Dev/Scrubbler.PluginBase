@@ -1,4 +1,4 @@
-namespace Scrubbler.Abstractions.Services;
+namespace Scrubbler.PluginBase.Services;
 
 public sealed class DialogService : IDialogService
 {

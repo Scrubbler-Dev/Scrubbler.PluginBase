@@ -1,4 +1,4 @@
-namespace Scrubbler.Abstractions;
+namespace Scrubbler.PluginBase;
 
 /// <summary>
 /// Interface for an object that can be scrobbled.

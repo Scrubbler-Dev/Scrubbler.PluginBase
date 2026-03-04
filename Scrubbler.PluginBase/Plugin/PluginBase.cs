@@ -1,43 +1,59 @@
 using System.Reflection;
-using Scrubbler.Abstractions.Services;
+using Scrubbler.PluginBase.Services;
 
-namespace Scrubbler.Abstractions.Plugin;
+namespace Scrubbler.PluginBase.Plugin;
 
 public abstract class PluginBase : IPlugin
 {
-    #region Properties
+	#region Properties
 
-    public string Name { get; }
+	public string Name { get; }
 
-    public string Id { get; }
+	public string Id { get; }
 
-    public string Description { get; }
+	public string Description { get; }
 
 	public Uri? IconUri { get; }
 
-    public PlatformSupport SupportedPlatforms { get; }
+	public PlatformSupport SupportedPlatforms { get; }
 
-    public Version Version => GetType().Assembly.GetName().Version!;
+	public Version Version { get; }
 
-    protected readonly ILogService _logService;
+	protected readonly ILogService _logService;
 
-    #endregion Properties
+	#endregion Properties
 
-    #region Construction
+	#region Construction
 
-    protected PluginBase(IModuleLogServiceFactory logFactory)
-    {
-        var attribute = GetType().GetCustomAttribute<PluginMetadataAttribute>() ?? throw new InvalidOperationException($"{GetType().Name} must have [PluginMetadata] attribute.");
+	protected PluginBase(IModuleLogServiceFactory logFactory)
+	{
+		var type = GetType();
+		var asm = type.Assembly;
 
-        Name = attribute.Name;
-        Id = GetType().FullName!.ToLowerInvariant();
-        Description = attribute.Description;
-		IconUri = new Uri(Path.Combine(Path.GetDirectoryName(GetType().Assembly.Location)!, "icon.png"));
+		var attribute = type.GetCustomAttribute<PluginMetadataAttribute>()
+			?? throw new InvalidOperationException($"{type.Name} must have [PluginMetadata] attribute.");
+
+		Name = attribute.Name;
+		Id = type.FullName!.ToLowerInvariant();
+		Description = attribute.Description;
+
+		IconUri = new Uri(Path.Combine(
+			Path.GetDirectoryName(asm.Location)!,
+			"icon.png"));
+
 		SupportedPlatforms = attribute.SupportedPlatforms;
-        _logService = logFactory.Create(Name);
-    }
+		_logService = logFactory.Create(Name);
 
-    #endregion Construction
+		Version = GetFileVersionOrDefault(asm);
+	}
 
-    public abstract IPluginViewModel GetViewModel();
+	#endregion Construction
+
+	public abstract IPluginViewModel GetViewModel();
+
+	private static Version GetFileVersionOrDefault(Assembly asm)
+	{
+		var s = asm.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version;
+		return Version.TryParse(s, out var v) ? v : new Version(0, 0, 0);
+	}
 }

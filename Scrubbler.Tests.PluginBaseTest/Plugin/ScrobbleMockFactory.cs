@@ -1,7 +1,7 @@
 using Moq;
-using Scrubbler.Abstractions;
+using Scrubbler.PluginBase;
 
-namespace Scrubbler.Tests.AbstractionsTest.Plugin;
+namespace Scrubbler.Tests.PluginBaseTest.Plugin;
 
 internal static class ScrobbleMockFactory
 {

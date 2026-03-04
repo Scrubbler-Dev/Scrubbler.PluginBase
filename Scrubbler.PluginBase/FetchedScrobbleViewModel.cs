@@ -1,4 +1,6 @@
-namespace Scrubbler.Abstractions;
+using Scrubbler.Abstractions;
+
+namespace Scrubbler.PluginBase;
 
 public partial class FetchedScrobbleViewModel(ScrobbleData scrobble) : ScrobbableObjectViewModel(scrobble.Artist, scrobble.Track, scrobble.Album, scrobble.AlbumArtist)
 {

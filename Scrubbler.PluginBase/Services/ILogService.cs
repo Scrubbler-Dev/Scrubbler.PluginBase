@@ -1,4 +1,4 @@
-namespace Scrubbler.Abstractions.Services;
+namespace Scrubbler.PluginBase.Services;
 
 /// <summary>
 /// Provides logging functionality for plugins.

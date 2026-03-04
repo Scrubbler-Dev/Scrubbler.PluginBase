@@ -1,4 +1,6 @@
-namespace Scrubbler.Abstractions.Plugin;
+using Scrubbler.Abstractions.Plugin;
+
+namespace Scrubbler.PluginBase.Plugin;
 
 public abstract class ScrobbleMultipleTimeViewModelBase<T> : ScrobbleMultipleViewModelBase<T> where T : IScrobbableObjectViewModel
 {

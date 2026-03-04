@@ -1,6 +1,6 @@
 using Windows.Storage.Pickers;
 
-namespace Scrubbler.Abstractions.Services;
+namespace Scrubbler.PluginBase.Services;
 
 public sealed class FilePickerService(IWindowHandleProvider? windowHandleProvider = null) : IFilePickerService
 {

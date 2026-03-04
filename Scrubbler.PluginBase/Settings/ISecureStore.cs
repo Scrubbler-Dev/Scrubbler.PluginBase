@@ -1,4 +1,4 @@
-namespace Scrubbler.Abstractions.Settings;
+namespace Scrubbler.PluginBase.Settings;
 
 /// <summary>
 /// Interface for securely storing and retrieving sensitive data (e.g., API keys, passwords, tokens).

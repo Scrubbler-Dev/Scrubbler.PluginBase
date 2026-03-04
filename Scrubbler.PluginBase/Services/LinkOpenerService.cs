@@ -1,6 +1,6 @@
 using Windows.System;
 
-namespace Scrubbler.Abstractions.Services;
+namespace Scrubbler.PluginBase.Services;
 
 public class LinkOpenerService : ILinkOpenerService
 {

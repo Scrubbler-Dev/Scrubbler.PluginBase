@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
-using Scrubbler.Abstractions;
 using Scrubbler.Abstractions.Plugin;
+using Scrubbler.PluginBase;
 
-namespace Scrubbler.Tests.AbstractionsTest.Plugin;
+namespace Scrubbler.Tests.PluginBaseTest.Plugin;
 
 internal sealed class TestScrobbleMultipleViewModel
     : ScrobbleMultipleViewModelBase<IScrobbableObjectViewModel>

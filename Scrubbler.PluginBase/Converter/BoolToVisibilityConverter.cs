@@ -1,6 +1,6 @@
 using Microsoft.UI.Xaml.Data;
 
-namespace Scrubbler.Abstractions.Converter;
+namespace Scrubbler.PluginBase.Converter;
 
 /// <summary>
 /// Converts a boolean value to a <see cref="Visibility"/> value.

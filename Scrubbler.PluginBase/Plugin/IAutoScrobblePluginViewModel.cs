@@ -1,6 +1,6 @@
-using Scrubbler.Abstractions.Plugin.Account;
+using Scrubbler.PluginBase.Plugin.Account;
 
-namespace Scrubbler.Abstractions.Plugin;
+namespace Scrubbler.PluginBase.Plugin;
 
 /// <summary>
 /// Interface for view models of plugins that automatically detect tracks and notify when scrobbles are available.

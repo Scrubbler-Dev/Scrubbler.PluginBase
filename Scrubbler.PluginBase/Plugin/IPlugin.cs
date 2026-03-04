@@ -1,4 +1,4 @@
-namespace Scrubbler.Abstractions.Plugin;
+namespace Scrubbler.PluginBase.Plugin;
 
 /// <summary>
 /// Specifies which platforms a plugin supports.

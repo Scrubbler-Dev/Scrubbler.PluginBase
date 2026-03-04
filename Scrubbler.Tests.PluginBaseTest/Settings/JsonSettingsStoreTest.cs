@@ -1,6 +1,6 @@
-using Scrubbler.Abstractions.Settings;
+using Scrubbler.PluginBase.Settings;
 
-namespace Scrubbler.Tests.AbstractionsTest.Settings;
+namespace Scrubbler.Tests.PluginBaseTest.Settings;
 
 [TestFixture]
 internal class JsonSettingsStoreTest

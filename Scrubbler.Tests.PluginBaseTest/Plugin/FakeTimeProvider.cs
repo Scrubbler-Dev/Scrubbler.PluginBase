@@ -1,4 +1,4 @@
-namespace Scrubbler.Tests.AbstractionsTest.Plugin;
+namespace Scrubbler.Tests.PluginBaseTest.Plugin;
 
 internal sealed class FakeTimeProvider(DateTimeOffset utcNow) : TimeProvider
 {

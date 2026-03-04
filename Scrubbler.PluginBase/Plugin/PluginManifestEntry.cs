@@ -1,4 +1,4 @@
-namespace Scrubbler.Abstractions.Plugin;
+namespace Scrubbler.PluginBase.Plugin;
 
 /// <summary>
 /// Represents metadata about a plugin available for installation.

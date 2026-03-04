@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 
-namespace Scrubbler.Abstractions.Services;
+namespace Scrubbler.PluginBase.Services;
 
 public sealed class FileStorageService : IFileStorageService
 {

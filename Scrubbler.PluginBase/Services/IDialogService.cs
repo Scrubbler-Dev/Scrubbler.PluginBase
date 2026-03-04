@@ -1,4 +1,4 @@
-namespace Scrubbler.Abstractions.Services;
+namespace Scrubbler.PluginBase.Services;
 
 /// <summary>
 /// Shows modal dialogs in a cross-platform way.

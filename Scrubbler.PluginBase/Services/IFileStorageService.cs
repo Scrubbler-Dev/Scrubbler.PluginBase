@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Scrubbler.Abstractions.Services;
+namespace Scrubbler.PluginBase.Services;
 
 /// <summary>
 /// Provides basic text file write helpers.

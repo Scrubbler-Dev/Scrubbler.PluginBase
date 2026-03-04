@@ -1,6 +1,6 @@
 using Scrubbler.Abstractions;
 
-namespace Scrubbler.Tests.AbstractionsTest;
+namespace Scrubbler.Tests.PluginBaseTest;
 
 [TestFixture]
 internal class ScrobbableObjectViewModelTest

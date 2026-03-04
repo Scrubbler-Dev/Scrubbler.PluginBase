@@ -1,4 +1,4 @@
-namespace Scrubbler.Abstractions.Plugin.Account;
+namespace Scrubbler.PluginBase.Plugin.Account;
 
 public class AccountFunctionContainer
 {

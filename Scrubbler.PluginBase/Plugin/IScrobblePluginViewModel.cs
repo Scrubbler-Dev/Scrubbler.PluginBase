@@ -1,4 +1,4 @@
-namespace Scrubbler.Abstractions.Plugin;
+namespace Scrubbler.PluginBase.Plugin;
 
 /// <summary>
 /// Interface for view models of plugins that allow users to manually select tracks to scrobble.

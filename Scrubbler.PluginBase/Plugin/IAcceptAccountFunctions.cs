@@ -1,6 +1,6 @@
-using Scrubbler.Abstractions.Plugin.Account;
+using Scrubbler.PluginBase.Plugin.Account;
 
-namespace Scrubbler.Abstractions.Plugin;
+namespace Scrubbler.PluginBase.Plugin;
 
 public interface IAcceptAccountFunctions
 {

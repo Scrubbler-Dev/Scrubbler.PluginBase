@@ -1,7 +1,7 @@
 using Microsoft.UI.Xaml;
-using Scrubbler.Abstractions.Converter;
+using Scrubbler.PluginBase.Converter;
 
-namespace Scrubbler.Tests.AbstractionsTest.Converter;
+namespace Scrubbler.Tests.PluginBaseTest.Converter;
 
 [TestFixture]
 internal class BoolToVisibilityConverterTest

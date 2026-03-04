@@ -1,4 +1,4 @@
-namespace Scrubbler.Abstractions.Plugin;
+namespace Scrubbler.PluginBase.Plugin;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class PluginMetadataAttribute : Attribute
