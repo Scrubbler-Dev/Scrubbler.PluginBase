@@ -2,10 +2,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Scrubbler.PluginBase.Plugin;
 
+[Microsoft.UI.Xaml.Data.Bindable]
 public partial class ScrobbleTimeViewModel : ObservableObject, IDisposable
 {
     private readonly TimeProvider _timeProvider;
-    private readonly CancellationTokenSource _cts = new();
+    private bool _disposed;
 
     private DateTimeOffset _date;
     private TimeSpan _time;
@@ -74,35 +75,29 @@ public partial class ScrobbleTimeViewModel : ObservableObject, IDisposable
         _timeProvider = timeProvider ?? TimeProvider.System;
         UseCurrentTime = true;
 
-        _ = UpdateLoopAsync(_cts.Token);
     }
 
-    private async Task UpdateLoopAsync(CancellationToken ct)
+    /// <summary>
+    /// Refreshes time-dependent bindings on the caller's thread. The time control
+    /// calls this from its UI DispatcherTimer; this model owns no background work.
+    /// </summary>
+    public void RefreshCurrentTime()
     {
-        try
-        {
-            while (!ct.IsCancellationRequested)
-            {
-                if (UseCurrentTime)
-                {
-                    OnPropertyChanged(nameof(Time));
-                    OnPropertyChanged(nameof(Date));
-                    OnPropertyChanged(nameof(Timestamp));
-                }
+        if (_disposed)
+            return;
 
-                OnPropertyChanged(nameof(IsTimeValid));
-                await Task.Delay(1000, ct);
-            }
-        }
-        catch (OperationCanceledException)
+        if (UseCurrentTime)
         {
-            // expected
+            OnPropertyChanged(nameof(Time));
+            OnPropertyChanged(nameof(Date));
+            OnPropertyChanged(nameof(Timestamp));
         }
+
+        OnPropertyChanged(nameof(IsTimeValid));
     }
 
     public void Dispose()
     {
-        _cts.Cancel();
-        _cts.Dispose();
+        _disposed = true;
     }
 }

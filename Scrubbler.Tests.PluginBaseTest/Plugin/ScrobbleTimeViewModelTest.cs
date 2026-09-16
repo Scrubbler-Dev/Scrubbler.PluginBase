@@ -6,6 +6,50 @@ namespace Scrubbler.Tests.PluginBaseTest.Plugin;
 internal class ScrobbleTimeViewModelTest
 {
     [Test]
+    public async Task Construction_without_ui_context_does_not_publish_background_notifications()
+    {
+        using var vm = await Task.Run(() => new ScrobbleTimeViewModel());
+        var notifications = 0;
+        vm.PropertyChanged += (_, _) => Interlocked.Increment(ref notifications);
+        await Task.Delay(1300);
+        Assert.That(notifications, Is.Zero);
+    }
+
+    [Test]
+    public void Refresh_raises_all_clock_notifications_synchronously_on_calling_thread()
+    {
+        using var vm = new ScrobbleTimeViewModel();
+        var thread = Environment.CurrentManagedThreadId;
+        var changes = new List<string?>();
+        vm.PropertyChanged += (_, e) =>
+        {
+            Assert.That(Environment.CurrentManagedThreadId, Is.EqualTo(thread));
+            changes.Add(e.PropertyName);
+        };
+        vm.RefreshCurrentTime();
+        Assert.That(changes, Is.EqualTo(new[] { "Time", "Date", "Timestamp", "IsTimeValid" }));
+    }
+
+    [Test]
+    public void Refresh_manual_time_checks_validity_without_changing_time_bindings()
+    {
+        using var vm = new ScrobbleTimeViewModel { UseCurrentTime = false };
+        var changes = new List<string?>();
+        vm.PropertyChanged += (_, e) => changes.Add(e.PropertyName);
+        vm.RefreshCurrentTime();
+        Assert.That(changes, Is.EqualTo(new[] { "IsTimeValid" }));
+    }
+
+    [Test]
+    public void Disposed_view_model_ignores_late_refresh_and_repeated_disposal()
+    {
+        var vm = new ScrobbleTimeViewModel();
+        vm.Dispose();
+        vm.PropertyChanged += (_, _) => Assert.Fail("Disposed model must not refresh bindings.");
+        Assert.DoesNotThrow(() => { vm.RefreshCurrentTime(); vm.Dispose(); });
+    }
+
+    [Test]
     public void UsesCurrentTime_ByDefault()
     {
         var time = new FakeTimeProvider(DateTimeOffset.Parse("2025-01-01T10:00:00"));
