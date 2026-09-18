@@ -77,6 +77,25 @@ internal class ScrobbleTimeViewModelTest
     }
 
     [Test]
+    public void DisablingUseCurrentTime_CapturesDateAndTimeAcrossMidnight()
+    {
+        var time = new FakeTimeProvider(DateTimeOffset.Now);
+        using var vm = new ScrobbleTimeViewModel(time);
+        vm.Date = time.GetLocalNow().AddDays(-5).Date;
+        var expected = time.GetLocalNow();
+
+        vm.UseCurrentTime = false;
+        time.Advance(TimeSpan.FromDays(1));
+
+        Assert.That(vm.Timestamp, Is.EqualTo(expected));
+        Assert.That(vm.IsTimeValid, Is.True);
+
+        vm.UseCurrentTime = true;
+        vm.UseCurrentTime = false;
+        Assert.That(vm.Timestamp, Is.EqualTo(time.GetLocalNow()));
+    }
+
+    [Test]
     public void Timestamp_IsDatePlusTime()
     {
         var time = new FakeTimeProvider(DateTimeOffset.Now);

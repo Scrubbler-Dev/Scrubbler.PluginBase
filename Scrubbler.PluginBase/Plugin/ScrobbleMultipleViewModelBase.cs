@@ -23,15 +23,12 @@ public abstract partial class ScrobbleMultipleViewModelBase<T> : ScrobblePluginV
         get { return _scrobbles; }
         protected set
         {
-            if (Scrobbles != null)
-            {
-                Scrobbles.CollectionChanged -= Scrobbles_CollectionChanged;
-                DisconnectExistingToScrobbleEvent();
-            }
+            ArgumentNullException.ThrowIfNull(value);
+            Scrobbles.CollectionChanged -= Scrobbles_CollectionChanged;
+            DisconnectExistingToScrobbleEvent();
 
             _scrobbles = value;
-            if (Scrobbles != null)
-                _scrobbles.CollectionChanged += Scrobbles_CollectionChanged;
+            _scrobbles.CollectionChanged += Scrobbles_CollectionChanged;
             ConnectExistingToScrobbleEvent();
 
             OnPropertyChanged();
@@ -39,6 +36,7 @@ public abstract partial class ScrobbleMultipleViewModelBase<T> : ScrobblePluginV
         }
     }
     private ObservableCollection<T> _scrobbles = [];
+    private readonly HashSet<IScrobbableObjectViewModel> _subscribedScrobbles = new(ReferenceEqualityComparer.Instance);
 
     /// <summary>
     /// Gets if all scrobbles can currently be selected.
@@ -53,7 +51,7 @@ public abstract partial class ScrobbleMultipleViewModelBase<T> : ScrobblePluginV
     /// <summary>
     /// Gets if selected scrobbles can be checked.
     /// </summary>
-    public bool CanCheckSelected => Scrobbles.Any(s => s.IsSelected && !s.ToScrobble);
+    public bool CanCheckSelected => Scrobbles.Any(s => s.IsSelected && s.CanBeScrobbled && !s.ToScrobble);
 
     /// <summary>
     /// Gets if selected scrobbles can be unchecked.
@@ -77,6 +75,11 @@ public abstract partial class ScrobbleMultipleViewModelBase<T> : ScrobblePluginV
     public int SelectedCount => Scrobbles.Where(s => s.IsSelected).Count();
 
     #endregion Properties
+
+    protected ScrobbleMultipleViewModelBase()
+    {
+        _scrobbles.CollectionChanged += Scrobbles_CollectionChanged;
+    }
 
     /// <summary>
     /// Marks all scrobbles as "ToScrobble".
@@ -140,11 +143,15 @@ public abstract partial class ScrobbleMultipleViewModelBase<T> : ScrobblePluginV
     /// <param name="state">State to set.</param>
     protected void SetToScrobbleState(IEnumerable<T> toSet, bool state)
     {
-        foreach (var item in toSet.Take(toSet.Count() - 1))
+        var items = toSet.Where(item => !state || item.CanBeScrobbled).ToArray();
+        if (items.Length == 0)
+            return;
+
+        foreach (var item in items.Take(items.Length - 1))
             item.UpdateToScrobbleSilent(state);
 
         // set last one manually to trigger the event
-        toSet.Last().ToScrobble = state;
+        items[^1].ToScrobble = state;
         Scrobbles = new ObservableCollection<T>(Scrobbles); // refreshes the view
     }
 
@@ -155,22 +162,15 @@ public abstract partial class ScrobbleMultipleViewModelBase<T> : ScrobblePluginV
     /// <param name="e">EventArgs.</param>
     private void Scrobbles_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems != null)
+        // Reset does not supply the removed items, so reconcile with our tracked subscriptions.
+        var current = new HashSet<IScrobbableObjectViewModel>(Scrobbles.Cast<IScrobbableObjectViewModel>(), ReferenceEqualityComparer.Instance);
+        foreach (var scrobble in _subscribedScrobbles.Where(s => !current.Contains(s)).ToArray())
         {
-            foreach (T scrobble in e.NewItems)
-            {
-                scrobble.ToScrobbleChanged += Scrobble_StateChanged;
-                scrobble.IsSelectedChanged += Scrobble_StateChanged;
-            }
+            scrobble.ToScrobbleChanged -= Scrobble_StateChanged;
+            scrobble.IsSelectedChanged -= Scrobble_StateChanged;
+            _subscribedScrobbles.Remove(scrobble);
         }
-        else if (e.Action == NotifyCollectionChangedAction.Remove && e.OldItems != null)
-        {
-            foreach (T scrobble in e.OldItems)
-            {
-                scrobble.ToScrobbleChanged -= Scrobble_StateChanged;
-                scrobble.IsSelectedChanged -= Scrobble_StateChanged;
-            }
-        }
+        ConnectExistingToScrobbleEvent();
 
         NotifyProperties();
     }
@@ -193,6 +193,9 @@ public abstract partial class ScrobbleMultipleViewModelBase<T> : ScrobblePluginV
     {
         foreach (T scrobble in Scrobbles)
         {
+            if (!_subscribedScrobbles.Add(scrobble))
+                continue;
+
             scrobble.ToScrobbleChanged += Scrobble_StateChanged;
             scrobble.IsSelectedChanged += Scrobble_StateChanged;
         }
@@ -204,10 +207,11 @@ public abstract partial class ScrobbleMultipleViewModelBase<T> : ScrobblePluginV
     /// </summary>
     private void DisconnectExistingToScrobbleEvent()
     {
-        foreach (T scrobble in Scrobbles)
+        foreach (var scrobble in _subscribedScrobbles)
         {
             scrobble.ToScrobbleChanged -= Scrobble_StateChanged;
             scrobble.IsSelectedChanged -= Scrobble_StateChanged;
         }
+        _subscribedScrobbles.Clear();
     }
 }

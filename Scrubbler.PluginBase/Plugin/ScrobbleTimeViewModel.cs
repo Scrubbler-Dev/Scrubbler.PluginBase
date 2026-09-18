@@ -48,7 +48,11 @@ public partial class ScrobbleTimeViewModel : ObservableObject, IDisposable
             if (_useCurrentTime != value)
             {
                 if (!value)
-                    _time = _timeProvider.GetLocalNow().TimeOfDay;
+                {
+                    var now = _timeProvider.GetLocalNow();
+                    _date = new DateTimeOffset(now.Date, now.Offset);
+                    _time = now.TimeOfDay;
+                }
 
                 _useCurrentTime = value;
                 OnPropertyChanged();

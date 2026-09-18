@@ -58,6 +58,137 @@ internal class ScrobbleMultipleViewModelBaseTest
     }
 
     [Test]
+    public void CheckAll_SkipsIneligibleItems()
+    {
+        var eligible = CreateScrobbleMock();
+        var expired = CreateScrobbleMock(canBeScrobbled: false);
+        var vm = new TestScrobbleMultipleViewModel();
+        vm.SetScrobbles([eligible.Object, expired.Object]);
+
+        vm.CheckAllCommand.Execute(null);
+
+        Assert.That(eligible.Object.ToScrobble, Is.True);
+        Assert.That(expired.Object.ToScrobble, Is.False);
+        Assert.That(vm.ToScrobbleCount, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void CheckSelected_RequiresEligibilityAndSkipsIneligibleItems()
+    {
+        var eligible = CreateScrobbleMock(isSelected: true);
+        var expired = CreateScrobbleMock(isSelected: true, canBeScrobbled: false);
+        var vm = new TestScrobbleMultipleViewModel();
+        vm.SetScrobbles([expired.Object]);
+        Assert.That(vm.CheckSelectedCommand.CanExecute(null), Is.False);
+        Assert.DoesNotThrow(() => vm.CheckSelectedCommand.Execute(null));
+
+        vm.Scrobbles.Add(eligible.Object);
+        Assert.That(vm.CheckSelectedCommand.CanExecute(null), Is.True);
+        vm.CheckSelectedCommand.Execute(null);
+
+        Assert.That(eligible.Object.ToScrobble, Is.True);
+        Assert.That(expired.Object.ToScrobble, Is.False);
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void Uncheck_CanClearIneligibleItems(bool selectedOnly)
+    {
+        var expired = CreateScrobbleMock(toScrobble: true, isSelected: true, canBeScrobbled: false);
+        var vm = new TestScrobbleMultipleViewModel();
+        vm.SetScrobbles([expired.Object]);
+
+        (selectedOnly ? vm.UncheckSelectedCommand : vm.UncheckAllCommand).Execute(null);
+
+        Assert.That(expired.Object.ToScrobble, Is.False);
+    }
+
+    [Test]
+    public void EmptyBulkCommands_DoNotThrow()
+    {
+        var vm = new TestScrobbleMultipleViewModel();
+        Assert.DoesNotThrow(() => vm.CheckAllCommand.Execute(null));
+        Assert.DoesNotThrow(() => vm.CheckSelectedCommand.Execute(null));
+        Assert.DoesNotThrow(() => vm.UncheckAllCommand.Execute(null));
+        Assert.DoesNotThrow(() => vm.UncheckSelectedCommand.Execute(null));
+    }
+
+    [Test]
+    public void InitialCollection_AddAndItemChangesNotifyBindingsAndCommands()
+    {
+        var vm = new TestScrobbleMultipleViewModel();
+        var item = CreateScrobbleMock();
+        var changes = new List<string?>();
+        var commandChanges = 0;
+        vm.PropertyChanged += (_, e) => changes.Add(e.PropertyName);
+        vm.CheckSelectedCommand.CanExecuteChanged += (_, _) => commandChanges++;
+
+        vm.Scrobbles.Add(item.Object);
+        Assert.That(changes, Does.Contain(nameof(vm.MaxToScrobbleCount)));
+        changes.Clear();
+        item.Object.ToScrobble = true;
+        Assert.That(changes, Does.Contain(nameof(vm.CanScrobble)));
+        changes.Clear();
+        commandChanges = 0;
+        item.Object.IsSelected = true;
+        Assert.That(changes, Does.Contain(nameof(vm.SelectedCount)));
+        Assert.That(commandChanges, Is.EqualTo(1));
+    }
+
+    [TestCase("replace")]
+    [TestCase("clear")]
+    [TestCase("remove")]
+    [TestCase("collection")]
+    public void RemovedItems_StopNotifyingAndNewItemsNotify(string operation)
+    {
+        var oldItem = CreateScrobbleMock();
+        var newItem = CreateScrobbleMock();
+        var vm = new TestScrobbleMultipleViewModel();
+        vm.SetScrobbles([oldItem.Object]);
+        var oldCollection = vm.Scrobbles;
+        switch (operation)
+        {
+            case "replace": vm.Scrobbles[0] = newItem.Object; break;
+            case "clear": vm.Scrobbles.Clear(); vm.Scrobbles.Add(newItem.Object); break;
+            case "remove": vm.Scrobbles.Remove(oldItem.Object); vm.Scrobbles.Add(newItem.Object); break;
+            case "collection": vm.SetScrobbles([newItem.Object]); break;
+        }
+        var changes = new List<string?>();
+        vm.PropertyChanged += (_, e) => changes.Add(e.PropertyName);
+
+        oldItem.Object.ToScrobble = true;
+        oldItem.Object.IsSelected = true;
+        if (operation == "collection")
+            oldCollection.Add(CreateScrobbleMock().Object);
+        Assert.That(changes, Is.Empty);
+
+        newItem.Object.ToScrobble = true;
+        Assert.That(changes, Does.Contain(nameof(vm.CanScrobble)));
+        changes.Clear();
+        newItem.Object.IsSelected = true;
+        Assert.That(changes, Does.Contain(nameof(vm.SelectedCount)));
+    }
+
+    [Test]
+    public void DuplicateItems_StaySubscribedUntilLastOccurrenceIsRemoved()
+    {
+        var item = CreateScrobbleMock();
+        var vm = new TestScrobbleMultipleViewModel();
+        vm.SetScrobbles([item.Object, item.Object]);
+        vm.Scrobbles.Move(0, 1);
+        vm.Scrobbles.RemoveAt(0);
+        var notifications = 0;
+        vm.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(vm.CanScrobble)) notifications++; };
+
+        item.Object.ToScrobble = true;
+        Assert.That(notifications, Is.EqualTo(1));
+        vm.Scrobbles.Clear();
+        notifications = 0;
+        item.Object.ToScrobble = false;
+        Assert.That(notifications, Is.Zero);
+    }
+
+    [Test]
     public void CanScrobble_True_WhenAnyItemIsMarked()
     {
         var vm = new TestScrobbleMultipleViewModel();
